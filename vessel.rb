@@ -13,7 +13,7 @@ class Disms
 
   end
 
-  def make_ism
+  def make_ism q = nil
 
     timeDiff  = Time.new.to_i - Date.new(2015,8,21).to_time.to_i
     daysGone  = (timeDiff/86400)
@@ -23,20 +23,13 @@ class Disms
 
     dict = {}
 
-    File.open("#{$nataniev.path}/library/dictionary.en","r:UTF-8") do |f|
-      f.each_line do |line|
-        depth = line[/\A */].size
-        line = line.strip
-        if depth == 0
-          word_type = line
-        else
-          if !dict[word_type] then dict[word_type] = [] end
-          dict[word_type].push(line)
-        end
-      end
+    Di.new("dictionary").to_a.each do |line|
+      word_type = line['C']
+      if !dict[word_type] then dict[word_type] = [] end
+      dict[word_type].push(line['WORD'])
     end
     
-    word = dict["NOUN"][chapter % dict["NOUN"].length]
+    word = q.to_s != "" ? q : dict["N"][chapter % dict["N"].length]
 
     # -te
     if word[-2,2] == "te"
@@ -77,6 +70,32 @@ class Disms
 
     end
 
+    def tweet_reply_auto
+
+      last_reply  = last_replies.first
+      username    = last_reply.user.screen_name
+      target_word = last_reply.text.downcase.split(' ').last.gsub(/[^0-9a-z]/i, '')
+
+      if username.like(@actor.twitter_account) then return "Repying to self." end
+        
+      # Check memory
+
+      ra = Ra.new("memory",$instance_path)
+      if ra.to_s == "#{username}:#{target_word}" then return "Already replied." end
+
+      # Make Word
+
+      word = @actor.make_ism(target_word)
+      tweet_reply(last_reply,"#{word}\nFor @#{username}.",true)
+
+      # Update memory
+      ra.replace("#{username}:#{target_word}")
+      return "Created word: #{word}"
+
+    end
+
   end
+
+  def actions ; return Actions.new(self,self) end
 
 end
