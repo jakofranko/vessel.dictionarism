@@ -1,19 +1,31 @@
 #!/bin/env ruby
 # encoding: utf-8
 
-$instance_path = File.expand_path(File.join(File.dirname(__FILE__), "/"))
+$nataniev.require("action","tweet")
 
-class Disms
+class VesselDictionarism
 
   include Vessel
 
-  def twitter_account
+  def initialize id = 0
 
-    return "dictionarism"
+    super
+
+    @name    = "Dictionarism"
+    @path    = File.expand_path(File.join(File.dirname(__FILE__), "/"))
+
+    install(:default,:generate)
+    install(:default,:tweet)
 
   end
 
-  def make_ism q = nil
+end
+
+class ActionGenerate
+
+  include Action
+
+  def act q = nil
 
     timeDiff  = Time.new.to_i - Date.new(2015,8,21).to_time.to_i
     daysGone  = (timeDiff/86400)
@@ -57,45 +69,20 @@ class Disms
 
   end
 
-  # Actions
+end
 
-  class Actions
+class ActionTweet
 
-    include ActionCollection
-    include ActionTweet
+  def account
 
-    def tweet_auto
-
-      return tweet(@actor.make_ism)
-
-    end
-
-    def tweet_reply_auto
-
-      last_reply  = last_replies.first
-      username    = last_reply.user.screen_name
-      target_word = last_reply.text.downcase.split(' ').last.gsub(/[^0-9a-z]/i, '')
-
-      if username.like(@actor.twitter_account) then return "Repying to self." end
-        
-      # Check memory
-
-      ra = Ra.new("memory",$instance_path)
-      if ra.to_s == "#{username}:#{target_word}" then return "Already replied." end
-
-      # Make Word
-
-      word = @actor.make_ism(target_word)
-      tweet_reply(last_reply,"#{word}\nFor @#{username}.",true)
-
-      # Update memory
-      ra.replace("#{username}:#{target_word}")
-      return "Created word: #{word}"
-
-    end
+    return "dictionarism"
 
   end
 
-  def actions ; return Actions.new(self,self) end
+  def payload
+
+    return ActionGenerate.new(@host).act
+
+  end
 
 end
