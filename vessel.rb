@@ -5,20 +5,21 @@ $nataniev.require("action","tweet")
 
 class VesselDictionarism
 
-  include Vessel
+    include Vessel
 
-  def initialize id = 0
+    def initialize id = 0
 
-    super
+        super
 
-    @name = "Dictionarism"
-    @docs = "A twitter bot that makes -isms out of words. A fork of an old [Nataniev automaton](https://wiki.xxiivv.com/#dictionarism)"
-    @path = File.expand_path(File.join(File.dirname(__FILE__), "/"))
+        @name = "Dictionarism"
+        @docs = "A twitter bot that makes -isms out of words. A fork of an old [Nataniev automaton](https://wiki.xxiivv.com/#dictionarism)"
+        @path = File.expand_path(File.join(File.dirname(__FILE__), "/"))
 
-    install(:default,:generate)
-    install(:default,:tweet)
+        install(:default, :generate)
+        install(:generic, :document)
+        install(:generic, :tweet)
 
-  end
+    end
 
 end
 
