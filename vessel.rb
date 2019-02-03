@@ -27,6 +27,15 @@ class ActionGenerate
 
   include Action
 
+  def initialize q = nil
+
+    super
+
+    @name = "Generate"
+    @docs = "Generate a new -ism"
+
+  end
+
   def act q = nil
 
     timeDiff  = Time.new.to_i - Date.new(2015,8,21).to_time.to_i
