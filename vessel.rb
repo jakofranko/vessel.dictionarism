@@ -11,8 +11,9 @@ class VesselDictionarism
 
     super
 
-    @name    = "Dictionarism"
-    @path    = File.expand_path(File.join(File.dirname(__FILE__), "/"))
+    @name = "Dictionarism"
+    @docs = "A twitter bot that makes -isms out of words. A fork of an old [Nataniev automaton](https://wiki.xxiivv.com/#dictionarism)"
+    @path = File.expand_path(File.join(File.dirname(__FILE__), "/"))
 
     install(:default,:generate)
     install(:default,:tweet)
@@ -40,7 +41,7 @@ class ActionGenerate
       if !dict[word_type] then dict[word_type] = [] end
       dict[word_type].push(line['WORD'])
     end
-    
+
     word = q.to_s != "" ? q : dict["N"][chapter % dict["N"].length]
 
     # -te
@@ -51,7 +52,7 @@ class ActionGenerate
       word = word[0...-1]+"ism"
     # -ly
     elsif word[-2,2] == "ly"
-      word = word+"ism"   
+      word = word+"ism"
     # -ed
     elsif word[-2,2] == "ed"
       word = word[0...-2]+"ism"
